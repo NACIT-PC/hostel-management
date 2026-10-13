@@ -5,6 +5,7 @@
 [![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Mobile](https://img.shields.io/badge/Mobile-Phone_&_Tablet-000000?style=for-the-badge&logo=android&logoColor=white)](https://simpleicons.org/)
 [![Web](https://img.shields.io/badge/Web-Laptop_&_Desktop-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://simpleicons.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 Design documentation for a system to manage bed allocation in a hostel.
 
@@ -69,3 +70,17 @@ Shows how each user relates to their roles / functional requirements.
 Keeps information and shows data types.
 
 > TODO: Add class diagram.
+
+## 3. Contributors
+
+| Role | Name | Email |
+| ------ | ------ | ------- |
+| Owner | Success | <successmwita22@gmail.com> |
+| Contributor | AQUA SLOVIC | <aquaslovic@gmail.com> |
+| Contributor | Muzika | <muzikamigochi129@gmail.com> |
+| Contributor | Bleggo 7 | <bleggobandz@gmail.com> |
+| Contributor | dnlmgwi | <pdmgawi@gmail.com> |
+
+## 4. License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
