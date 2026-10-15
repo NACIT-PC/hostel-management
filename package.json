@@ -1,0 +1,34 @@
+{
+  "name": "hostel-management",
+  "version": "1.0.0",
+  "description": "Command-Line Interface (CLI) Hostel Bed Allocation System built with Node.js and SQLite",
+  "type": "module",
+  "main": "bin/hostel.js",
+  "bin": {
+    "hostel": "bin/hostel.js"
+  },
+  "scripts": {
+    "start": "node bin/hostel.js",
+    "menu": "node bin/hostel.js menu",
+    "init": "node bin/hostel.js init",
+    "seed": "node bin/hostel.js seed",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "keywords": [
+    "hostel",
+    "bed-allocation",
+    "cli",
+    "sqlite",
+    "nodejs"
+  ],
+  "author": "NACIT-PC",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "commander": "^14.0.0",
+    "inquirer": "^12.9.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
