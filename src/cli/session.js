@@ -39,7 +39,7 @@ export { PERMISSIONS, roleLabel, describePermissions, can };
 
 /** Create the first administrator when the database has no users at all. */
 export async function firstRunSetup() {
-  heading('First run - create the administrator account');
+  print(heading('First run - create the administrator account'));
   if (authService.countUsers() > 0) return null;
 
   print(
@@ -125,18 +125,72 @@ export function describeRole(user) {
   return `${roleLabel(user.role)}: ${describePermissions(user.role).join(', ')}`;
 }
 
-/** Prompt shown to a brand new database before the login screen. */
-export async function ensureFirstUser() {
-  if (authService.countUsers() > 0) return true;
-
-  const wantsSetup = await select('No users exist yet. What would you like to do?', [
-    { name: 'Create the administrator account now', value: 'setup' },
-    { name: 'Quit (I will run "npm run init" to create the administrator)', value: 'quit' },
+/** Startup choice: sign in, create an account, or leave. */
+export async function chooseAction() {
+  const message =
+    authService.countUsers() === 0
+      ? 'No accounts yet - choose "Sign up" to create the administrator'
+      : 'Sign in or sign up';
+  return select(message, [
+    { name: 'Sign in', value: 'signin' },
+    { name: 'Sign up', value: 'signup' },
+    { name: color.dim('Exit'), value: 'exit' },
   ]);
+}
 
-  if (wantsSetup === 'quit') return false;
-  const created = await firstRunSetup();
-  return created !== null;
+/**
+ * Create an account. The first account is the administrator (no approval); any
+ * later account must be approved by an existing administrator.
+ * @returns {Promise<boolean>} true when an account was created.
+ */
+export async function signUp() {
+  if (authService.countUsers() === 0) {
+    const created = await firstRunSetup();
+    return created !== null;
+  }
+
+  print(heading('Sign up'));
+  print(color.dim('  New accounts are created by an existing administrator.'));
+
+  const adminUsername = await text('Administrator username', { field: 'Username', max: 40 });
+  const adminPassword = await password('Administrator password');
+
+  let actor = null;
+  try {
+    actor = authService.authenticate(adminUsername, adminPassword);
+  } catch (error) {
+    print(failure(error.message));
+    return false;
+  }
+  if (!actor || !can(actor.role, PERMISSIONS.USER_MANAGE)) {
+    print(failure('Only an administrator can create accounts.'));
+    return false;
+  }
+
+  const username = await text('New username', { field: 'Username', max: 40 });
+  const fullName = await text('Full name', { field: 'Full name', max: 120 });
+  const role = await select('Role for the new account', [
+    { name: `${roleLabel('admin')} - full access`, value: 'admin' },
+    { name: `${roleLabel('warden')} - hostels, allocation and stays`, value: 'warden' },
+    { name: `${roleLabel('clerk')} - front desk`, value: 'clerk' },
+  ]);
+  const pass = await asPasswordPrompt('Password (min 8 characters)');
+  const again = await password('Repeat password');
+
+  if (pass !== again) {
+    print(failure('Passwords do not match. Nothing was created.'));
+    return false;
+  }
+
+  try {
+    const user = authService.createUser({ username, fullName, password: pass, role }, actor);
+    print(success(`Account "${user.username}" created. You can now sign in.`));
+    await pause();
+    return true;
+  } catch (error) {
+    print(failure(error.message));
+    return false;
+  }
 }
 
 export function institution() {

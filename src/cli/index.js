@@ -25,19 +25,18 @@ const EXIT = '__exit__';
 export async function runInteractive() {
   ensureDatabase();
 
-  print(
-    color.dim(
-      `\n  ${getInstitutionName()} - Hostel Bed Allocation System\n  Everything is operated from this terminal. Type Ctrl+C at any prompt to abort gracefully.`,
-    ),
-  );
-
   try {
-    const ready = await session.ensureFirstUser();
-    if (!ready) return 0;
-
     for (;;) {
+      const action = await session.chooseAction();
+      if (action === 'exit') return 0;
+
+      if (action === 'signup') {
+        await session.signUp();
+        continue;
+      }
+
       const user = await session.login();
-      if (!user) break;
+      if (!user) return 0;
 
       const signedOut = await mainMenu(user);
       if (!signedOut) return 0;
@@ -45,7 +44,6 @@ export async function runInteractive() {
       session.signOut();
       print(color.dim('\n  Signed out.'));
     }
-    return 0;
   } catch (error) {
     if (error instanceof PromptExit) {
       print(color.dim('\n  Aborted. Goodbye.'));
@@ -114,7 +112,7 @@ async function mainMenu(user) {
   for (;;) {
     const available = options.filter((option) => !option.permission || can(user.role, option.permission));
 
-    banner({ institution: getInstitutionName(), user });
+    banner({ user });
     print(color.dim(`\n  Role: ${roleLabel(user.role)}`));
 
     const choice = await select(

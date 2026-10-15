@@ -20,9 +20,8 @@ export const color = {
   gray: wrap(90),
 };
 
-export function heading(title, width = 78) {
-  const bar = '-'.repeat(Math.max(0, width - title.length - 3));
-  return `\n${color.bold(color.cyan(`== ${title} `))}${color.dim(bar)}`;
+export function heading(title) {
+  return `\n${color.bold(title)}`;
 }
 
 export function section(title) {

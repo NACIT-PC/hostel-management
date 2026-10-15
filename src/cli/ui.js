@@ -28,8 +28,8 @@ export function printError(error) {
 /* Banners                                                             */
 /* ------------------------------------------------------------------ */
 
-export function banner({ institution, user }) {
-  const title = institution ? `${institution} - Hostel Bed Allocation` : 'Hostel Bed Allocation System';
+export function banner({ user }) {
+  const title = 'Hostel Bed Allocation System';
   print(color.bold(color.cyan(`\n${'='.repeat(62)}`)));
   print(color.bold(color.cyan(`  ${title}`)));
   if (user) {
