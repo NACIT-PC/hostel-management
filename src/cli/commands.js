@@ -11,9 +11,9 @@
  * HOSTEL_PASSWORD, or prompt for the password when running in a terminal.
  */
 import { Command } from 'commander';
-import { APP_NAME, APP_VERSION, GENDERS, YEAR_FORMS, HOSTEL_GENDERS, ROOM_AMENITIES, BUNK_LEVELS, ALL_YEARS, HEALTH_REQUIREMENT_CODES } from '../config.js';
+import { APP_NAME, APP_VERSION, GENDERS, YEAR_FORMS, HOSTEL_GENDERS, ROOM_AMENITIES, BUNK_LEVELS, ALL_YEARS, HEALTH_REQUIREMENT_CODES, DEFAULT_ADMIN } from '../config.js';
 import { ensureDatabase, databaseExists, closeDatabase } from '../db/connection.js';
-import { initialise, seedDemoData } from '../db/seed.js';
+import { initialise, ensureAdministrator } from '../db/bootstrap.js';
 import * as authService from '../services/authService.js';
 import * as hostelService from '../services/hostelService.js';
 import * as studentService from '../services/studentService.js';
@@ -37,11 +37,11 @@ import { password as promptPassword, confirm } from './prompts.js';
 
 const AUTH_OPTIONS = (command) =>
   command
-    .option('-u, --user <username>', 'system user (default: $HOSTEL_USER or "admin")')
+    .option('-u, --user <username>', 'system user (default: $HOSTEL_USER or the administrator account)')
     .option('-p, --password <password>', 'password (default: $HOSTEL_PASSWORD, otherwise prompted)');
 
 async function resolveActor(options) {
-  const username = options.user ?? process.env.HOSTEL_USER ?? 'admin';
+  const username = options.user ?? process.env.HOSTEL_USER ?? DEFAULT_ADMIN.username;
   let secret = options.password ?? process.env.HOSTEL_PASSWORD;
 
   if (!secret) {
@@ -95,48 +95,28 @@ export function buildProgram() {
 
   program
     .command('init')
-    .description('create the SQLite database and schema (safe to re-run)')
-    .option('-f, --force', 'delete the existing database file first')
+    .description('create the database, schema and administrator account')
+    .option('-f, --force', 'delete the existing database file first (resets all data)')
+    .option('--admin-user <username>', 'administrator username (default: the configured administrator)')
+    .option('--admin-password <password>', 'administrator password (default: the configured administrator)')
+    .option('--admin-name <name>', 'administrator full name')
     .action((options) => {
+      const existed = databaseExists();
       initialise({ force: Boolean(options.force) });
-      print(success(`Database ready (${databaseExists() ? 'created' : 'existing'}).`));
-      print(color.dim('  Next: "node bin/hostel.js menu" to create the administrator account and start working.'));
-    });
+      print(success(`Database ready (${existed && !options.force ? 'existing' : 'created'}).`));
 
-  program
-    .command('seed')
-    .description('load demo hostels, students, fees and allocations')
-    .option('--admin-password <password>', 'password for the demo admin user')
-    .option('--warden-password <password>', 'password for the demo warden user')
-    .option('--clerk-password <password>', 'password for the demo clerk user')
-    .action((options) => {
-      const result = seedDemoData({
-        adminPassword: options.adminPassword,
-        wardenPassword: options.wardenPassword,
-        clerkPassword: options.clerkPassword,
+      const result = ensureAdministrator({
+        username: options.adminUser,
+        password: options.adminPassword,
+        fullName: options.adminName,
       });
 
-      if (result.skipped) {
-        print(warn(result.message));
-        return;
+      if (result.created) {
+        print(success(`Administrator "${result.user.username}" created.`));
+      } else {
+        print(color.dim('  An administrator account already exists; nothing to create.'));
       }
-
-      print(success(`Seeded ${result.hostels} hostels, ${result.students} students, ${result.freeBeds} free beds.`));
-      print(heading('Demo accounts (change these passwords!)'));
-      print(
-        table(
-          result.users.map((user) => ({
-            username: user.username,
-            role: user.role,
-            password: user.password,
-          })),
-          [
-            { key: 'username', header: 'Username' },
-            { key: 'role', header: 'Role' },
-            { key: 'password', header: 'Password' },
-          ],
-        ),
-      );
+      print(color.dim('  Next: "node bin/hostel.js menu" to sign in.'));
     });
 
   program

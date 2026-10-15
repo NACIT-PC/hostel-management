@@ -131,7 +131,7 @@ export async function ensureFirstUser() {
 
   const wantsSetup = await select('No users exist yet. What would you like to do?', [
     { name: 'Create the administrator account now', value: 'setup' },
-    { name: 'Quit (I will run "npm run seed" instead)', value: 'quit' },
+    { name: 'Quit (I will run "npm run init" to create the administrator)', value: 'quit' },
   ]);
 
   if (wantsSetup === 'quit') return false;

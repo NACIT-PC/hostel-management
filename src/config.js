@@ -20,6 +20,18 @@ export const SCHEMA_PATH = path.join(ROOT_DIR, 'src', 'db', 'schema.sql');
 export const APP_NAME = 'Hostel Bed Allocation System';
 export const APP_VERSION = '1.0.0';
 
+/**
+ * The administrator account created by `init` the first time it runs on an
+ * empty database. Sign in with these credentials, then change the password
+ * (`npm start` -> "Change my password") or pass --admin-user/--admin-password
+ * to `init` to use something else.
+ */
+export const DEFAULT_ADMIN = {
+  username: 'hostel-management@gmail.com',
+  password: '12345678',
+  fullName: 'Hostel Administrator',
+};
+
 /* ------------------------------------------------------------------ */
 /* Student / hostel taxonomies                                         */
 /* ------------------------------------------------------------------ */

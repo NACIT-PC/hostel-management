@@ -30,7 +30,7 @@ export function verifyPassword(plain, stored) {
   return crypto.timingSafeEqual(expected, actual);
 }
 
-/** Random readable password used by the seeder. */
+/** Random readable password (useful when generating credentials). */
 export function generatePassword(length = 12) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
   const bytes = crypto.randomBytes(length);

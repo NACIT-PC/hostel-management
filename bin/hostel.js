@@ -4,8 +4,7 @@
  *
  *   node bin/hostel.js                 -> interactive menu (default command)
  *   node bin/hostel.js --help          -> full command reference
- *   node bin/hostel.js init            -> create the database + schema
- *   node bin/hostel.js seed            -> load demo data
+ *   node bin/hostel.js init            -> create the database, schema and admin account
  *   node bin/hostel.js availability    -> and so on
  *
  * The database connection is always closed before the process exits so WAL
