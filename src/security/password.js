@@ -1,9 +1,3 @@
-/**
- * Password hashing using Node's built-in scrypt (no native dependency).
- *
- * Stored format:  scrypt$<salt-hex>$<hash-hex>
- * Verification is timing-safe.
- */
 import crypto from 'node:crypto';
 import { ValidationError } from '../utils/errors.js';
 
@@ -30,7 +24,6 @@ export function verifyPassword(plain, stored) {
   return crypto.timingSafeEqual(expected, actual);
 }
 
-/** Random readable password (useful when generating credentials). */
 export function generatePassword(length = 12) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
   const bytes = crypto.randomBytes(length);

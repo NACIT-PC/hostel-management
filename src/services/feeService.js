@@ -1,11 +1,3 @@
-/**
- * Fee registration.
- *
- * Business rule: a student must have deposited at least the configured
- * "first deposit" amount before they become eligible for bed allocation.
- * Every deposit is stored as its own immutable row; eligibility is always
- * derived from the sum, never cached, so corrections are instant and honest.
- */
 import { getDb } from '../db/connection.js';
 import { FEE_TYPES, PAYMENT_METHODS } from '../config.js';
 import { assertPermission, PERMISSIONS } from '../security/permissions.js';
@@ -92,11 +84,6 @@ export function totalPaid(studentId) {
   );
 }
 
-/**
- * @returns {{student_id:number, total_paid:number, required:number, balance:number,
- *            meetsRequirement:boolean, first_deposit_on:string|null, payment_count:number,
- *            currency:string, fee_type_totals:object}}
- */
 export function getFeeSummary(studentId) {
   const db = getDb();
   const totals = db
@@ -129,7 +116,6 @@ export function getFeeSummary(studentId) {
   };
 }
 
-/** Row shape consumed by the fee reports. */
 export function feeStatusReport({ onlyShortfall = false } = {}) {
   const required = getFirstDepositRequirement();
   const rows = getDb()

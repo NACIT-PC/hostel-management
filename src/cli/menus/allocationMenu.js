@@ -1,6 +1,3 @@
-/**
- * Allocation menu: eligibility assessment, automatic and manual placement.
- */
 import { PERMISSIONS } from '../../security/permissions.js';
 import * as allocationService from '../../services/allocationService.js';
 import * as eligibilityService from '../../services/eligibilityService.js';

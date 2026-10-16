@@ -1,8 +1,6 @@
-
 import inquirer from 'inquirer';
 import { asAmount, asBoolean, asInteger, asText } from '../utils/validate.js';
 
-/** Thrown when the user presses Ctrl+C / Esc - handled once at the top level. */
 export class PromptExit extends Error {
   constructor(message = 'Aborted by user.') {
     super(message);
@@ -23,10 +21,6 @@ async function ask(question) {
 
 const trim = (input) => (typeof input === 'string' ? input.trim() : input);
 
-/**
- * @param {{type?: string, message: string, choices?: any[], default?: any,
- *          clean?: (value: any) => any, optional?: boolean, pageSize?: number, mask?: string}} options
- */
 async function askValue({
   type = 'input',
   message,
@@ -65,7 +59,6 @@ async function askValue({
   return clean ? clean(raw) : raw;
 }
 
-/** Free text. `field` is used in validation messages. */
 export async function text(message, { field = message, default: defaultValue, max = 200, optional = false } = {}) {
   return askValue({
     message,
@@ -107,7 +100,6 @@ export async function confirm(message, defaultValue = false) {
   return value === true;
 }
 
-/** yes/no answered by typing, for forms where a strict list is nicer. */
 export async function yesNo(message, { default: defaultValue = true } = {}) {
   const value = await ask({
     type: 'list',
@@ -122,11 +114,6 @@ export async function yesNo(message, { default: defaultValue = true } = {}) {
   return asBoolean(value, message);
 }
 
-/**
- * Single choice list.
- * @param {string} message
- * @param {Array<{name: string, value: any, short?: string}>} choices
- */
 export async function select(message, choices, { pageSize = 15, default: defaultValue } = {}) {
   return ask({
     type: 'list',
@@ -154,7 +141,6 @@ export async function password(message) {
   return typeof value === 'string' ? value : '';
 }
 
-/** Wait for the user before redrawing a menu. */
 export async function pause(message = 'Press ENTER to continue') {
   try {
     await ask({ type: 'input', name: 'value', message: `${message} ...`, default: '' });

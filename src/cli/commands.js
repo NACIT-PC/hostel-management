@@ -1,15 +1,3 @@
-/**
- * Command-driven interface (commander).
- *
- * Every interactive capability is also available as a scriptable command, for
- * example:
- *   node bin/hostel.js availability
- *   node bin/hostel.js students add --code NACIT/2026/020 --name "..." --gender Female --year "Year 1"
- *   node bin/hostel.js allocate NACIT/2026/020
- *
- * Authenticated commands accept --user/--password, or read HOSTEL_USER /
- * HOSTEL_PASSWORD, or prompt for the password when running in a terminal.
- */
 import { Command } from 'commander';
 import { APP_NAME, APP_VERSION, GENDERS, YEAR_FORMS, HOSTEL_GENDERS, ROOM_AMENITIES, BUNK_LEVELS, ALL_YEARS, HEALTH_REQUIREMENT_CODES, DEFAULT_ADMIN } from '../config.js';
 import { ensureDatabase, databaseExists, closeDatabase } from '../db/connection.js';
@@ -30,10 +18,6 @@ import { AppError, ValidationError } from '../utils/errors.js';
 import { color, dateTime, keyValue, money, print, printError, success, table, warn, heading } from './ui.js';
 import { runInteractive, quickSetup } from './index.js';
 import { password as promptPassword, confirm } from './prompts.js';
-
-/* ------------------------------------------------------------------ */
-/* Helpers                                                             */
-/* ------------------------------------------------------------------ */
 
 const AUTH_OPTIONS = (command) =>
   command
@@ -58,14 +42,6 @@ async function resolveActor(options) {
   return user;
 }
 
-/**
- * Wrap an authenticated action. The handler is the final argument.
- *
- * Options come from the commander command itself, not from the raw argv:
- * commander invokes the action with `this` bound to the command, so
- * `this.opts()` holds the parsed `--user` / `--password` flags for
- * non-interactive use.
- */
 const asActor = (...callArgs) => {
   const handler = callArgs[callArgs.length - 1];
   return async function authenticatedAction() {
@@ -78,10 +54,6 @@ const asActor = (...callArgs) => {
 
 const parseAmenities = (value) => value ?? '';
 
-/* ------------------------------------------------------------------ */
-/* Program                                                             */
-/* ------------------------------------------------------------------ */
-
 export function buildProgram() {
   const program = new Command();
 
@@ -90,8 +62,6 @@ export function buildProgram() {
     .description(`${APP_NAME} - command line bed allocation for hostels`)
     .version(APP_VERSION, '-v, --version')
     .showHelpAfterError('(add --help for additional information)');
-
-  /* ---------------- setup ---------------- */
 
   program
     .command('init')
@@ -126,8 +96,6 @@ export function buildProgram() {
       ensureDatabase();
       process.exitCode = await runInteractive();
     });
-
-  /* ---------------- reporting ---------------- */
 
   program
     .command('dashboard')
@@ -404,8 +372,6 @@ export function buildProgram() {
       );
     });
 
-  /* ---------------- hostels ---------------- */
-
   const hostels = program.command('hostels').description('hostel inventory operations');
 
   hostels
@@ -594,8 +560,6 @@ export function buildProgram() {
       print(success(`Bed ${bed.room_number}/${bed.bed_label} is now ${bed.is_available === 1 ? 'available' : 'disabled'}.`));
     }),
   );
-
-  /* ---------------- students ---------------- */
 
   const students = program.command('students').description('student operations');
 
@@ -866,8 +830,6 @@ export function buildProgram() {
     }),
   );
 
-  /* ---------------- fees ---------------- */
-
   const fees = program.command('fees').description('fee operations');
 
   AUTH_OPTIONS(
@@ -973,8 +935,6 @@ export function buildProgram() {
       print(success(`Payment deleted. New total: ${summary.total_paid} ${summary.currency}.`));
     }),
   );
-
-  /* ---------------- eligibility & allocation ---------------- */
 
   program
     .command('eligibility <student>')
@@ -1202,8 +1162,6 @@ export function buildProgram() {
       );
     });
 
-  /* ---------------- users, settings ---------------- */
-
   const users = program.command('users').description('system users');
 
   users
@@ -1326,8 +1284,6 @@ export function buildProgram() {
     }),
   );
 
-  /* ---------------- role reference ---------------- */
-
   program
     .command('roles')
     .description('show roles and their permissions')
@@ -1345,8 +1301,6 @@ export function buildProgram() {
         ),
       );
     });
-
-  /* ---------------- misc ---------------- */
 
   program
     .command('db-info')

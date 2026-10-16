@@ -1,6 +1,3 @@
-/**
- * Hostel inventory menu: hostels, rooms and beds.
- */
 import { HOSTEL_GENDERS, HOSTEL_CATEGORIES, ROOM_AMENITIES, BUNK_LEVELS, LIMITS, ALL_YEARS } from '../../config.js';
 import { PERMISSIONS } from '../../security/permissions.js';
 import * as hostelService from '../../services/hostelService.js';

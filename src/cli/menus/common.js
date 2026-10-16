@@ -1,6 +1,3 @@
-/**
- * Shared building blocks for the interactive menus.
- */
 import { can, PERMISSIONS } from '../../security/permissions.js';
 import * as studentService from '../../services/studentService.js';
 import * as hostelService from '../../services/hostelService.js';
@@ -9,12 +6,6 @@ import { pause, select, text, PromptExit } from '../prompts.js';
 
 export const BACK = '__back__';
 
-/**
- * Run a declarative menu loop until the user goes back.
- *
- * @param {{title: string, actor: object, options: Array<{label: string, value: string,
- *          permission?: string, run: () => Promise<any>}>, footer?: string}} config
- */
 export async function runMenu({ title, actor, options, footer = '<< Back' }) {
   for (;;) {
     const available = options.filter((option) => !option.permission || can(actor.role, option.permission));
@@ -45,7 +36,6 @@ export async function runMenu({ title, actor, options, footer = '<< Back' }) {
   }
 }
 
-/** Search for a student and return the full row, or null. */
 export async function pickStudent({ message = 'Find student (name or Student ID)' } = {}) {
   const term = await text(message, { field: 'Search text', max: 60 });
   let rows;
@@ -73,7 +63,6 @@ export async function pickStudent({ message = 'Find student (name or Student ID)
   return studentService.resolveStudent(choice);
 }
 
-/** Choose a hostel from the inventory. */
 export async function pickHostel({ message = 'Select hostel', allowAll = false } = {}) {
   const hostels = hostelService.listHostels();
   if (!hostels.length) {

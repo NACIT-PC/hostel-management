@@ -1,44 +1,25 @@
-/**
- * Global configuration and domain constants for the Hostel Bed Allocation System.
- *
- * Everything that defines "what the institute allows" lives here so that the
- * services, the CLI and the tests all agree on a single source of truth.
- */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Absolute path of the SQLite database file (override with HOSTEL_DB_PATH). */
 export const DB_PATH = process.env.HOSTEL_DB_PATH
   ? path.resolve(process.env.HOSTEL_DB_PATH)
   : path.join(ROOT_DIR, 'data', 'hostel.db');
 
-/** Absolute path of the SQL schema script. */
 export const SCHEMA_PATH = path.join(ROOT_DIR, 'src', 'db', 'schema.sql');
 
 export const APP_NAME = 'Hostel Bed Allocation System';
 export const APP_VERSION = '1.0.0';
 
-/**
- * The administrator account created by `init` the first time it runs on an
- * empty database. Sign in with these credentials, then change the password
- * (`npm start` -> "Change my password") or pass --admin-user/--admin-password
- * to `init` to use something else.
- */
 export const DEFAULT_ADMIN = {
   username: 'hostel-management@gmail.com',
   password: '12345678',
   fullName: 'Hostel Administrator',
 };
 
-/* ------------------------------------------------------------------ */
-/* Student / hostel taxonomies                                         */
-/* ------------------------------------------------------------------ */
-
 export const GENDERS = ['Male', 'Female'];
 
-/** A hostel is either single-sex or (rarely) mixed. */
 export const HOSTEL_GENDERS = ['Male', 'Female', 'Mixed'];
 
 export const YEAR_FORMS = [
@@ -53,7 +34,6 @@ export const YEAR_FORMS = [
   'Year 5',
 ];
 
-/** `ALL` means the hostel accepts every year/form. */
 export const ALL_YEARS = 'ALL';
 export const HOSTEL_CATEGORIES = [ALL_YEARS, ...YEAR_FORMS];
 
@@ -74,13 +54,6 @@ export const PAYMENT_METHODS = ['Cash', 'Bank transfer', 'Mobile money', 'Cheque
 
 export const ALLOCATION_STATUSES = ['assigned', 'checked_in', 'checked_out', 'cancelled'];
 
-/**
- * Health / sensitivity requirement codes.
- *
- * `enforceable` codes are matched against physical bed attributes so the
- * allocator can *guarantee* the accommodation suits the student. Codes with
- * `enforceable: false` are advisory only (they are still recorded privately).
- */
 export const HEALTH_REQUIREMENT_CODES = [
   {
     code: 'GROUND_FLOOR',
@@ -102,10 +75,6 @@ export const HEALTH_REQUIREMENT_LEVELS = ['required', 'preferred'];
 export const HEALTH_REQUIREMENT_BY_CODE = new Map(
   HEALTH_REQUIREMENT_CODES.map((entry) => [entry.code, entry]),
 );
-
-/* ------------------------------------------------------------------ */
-/* Settings (stored in the `settings` table, editable from the CLI)     */
-/* ------------------------------------------------------------------ */
 
 export const SETTING_KEYS = {
   INSTITUTION_NAME: 'institution_name',
@@ -130,10 +99,6 @@ export const DEFAULT_SETTINGS = [
     label: 'Currency label used when printing amounts',
   },
 ];
-
-/* ------------------------------------------------------------------ */
-/* Consistency guards                                                  */
-/* ------------------------------------------------------------------ */
 
 export const LIMITS = {
   MAX_BEDS_PER_ROOM: 12,

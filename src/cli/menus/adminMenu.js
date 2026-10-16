@@ -1,6 +1,3 @@
-/**
- * Administration menu: users, policy settings and database information.
- */
 import { DB_PATH, SETTING_KEYS } from '../../config.js';
 import { PERMISSIONS, ROLE_NAMES, describePermissions } from '../../security/permissions.js';
 import * as authService from '../../services/authService.js';

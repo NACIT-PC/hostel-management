@@ -1,6 +1,3 @@
-/**
- * Availability and reporting menu (documentational relational queries).
- */
 import { PERMISSIONS } from '../../security/permissions.js';
 import * as reportService from '../../services/reportService.js';
 import * as stayService from '../../services/stayService.js';

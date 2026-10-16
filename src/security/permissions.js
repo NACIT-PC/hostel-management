@@ -1,14 +1,3 @@
-/**
- * Role based access control.
- *
- * Three roles are supported:
- *   admin  - full control, including user accounts, settings and privacy reveals
- *   warden - day-to-day hostel operations (inventory, students, allocation, stays)
- *   clerk  - front desk: registration, fee capture, allocation & check-in/out
- *
- * Permission strings are used by services (`assertPermission(actor, 'x')`) and
- * by the interactive menus (`canManageHostels` style helpers).
- */
 import { ROLE_NAMES, ROLE_PERMISSIONS } from './roles.js';
 import { PermissionError } from '../utils/errors.js';
 
@@ -28,19 +17,10 @@ export const PERMISSIONS = {
   AUDIT_VIEW: 'audit.view',
 };
 
-/**
- * @param {string} role
- * @param {string} permission
- */
 export function can(role, permission) {
   return (ROLE_PERMISSIONS[role] ?? []).includes(permission);
 }
 
-/**
- * Throws PermissionError unless the actor holds every requested permission.
- * @param {{role?: string, username?: string}|null} actor
- * @param {string|string[]} permission
- */
 export function assertPermission(actor, permission) {
   if (!actor) throw new PermissionError('You must be signed in to perform this action.');
   const required = Array.isArray(permission) ? permission : [permission];

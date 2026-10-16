@@ -1,6 +1,3 @@
-/**
- * Inventory: room/bed generation and occupancy consistency.
- */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { hostelService, freshSetup, getDb } from './helpers.js';
@@ -44,7 +41,6 @@ test('createHostel generates rooms, beds and consistent counters', () => {
 
   const rooms = hostelService.listRooms(hostel.id);
   assert.equal(rooms.length, 4);
-  // 10 beds across 4 rooms -> 3, 3, 2, 2
   assert.deepEqual(
     rooms.map((room) => room.capacity),
     [3, 3, 2, 2],
@@ -88,7 +84,6 @@ test('addRoom creates beds with the correct bunk layout', () => {
       ['B3', 'SINGLE'],
     ],
   );
-  // Enabling/disabling updates free-bed availability.
   hostelService.setBedAvailability(beds[0].id, false, admin);
   assert.equal(hostelService.listFreeBeds({ hostelId: hostel.id }).length, 3); // 1 (base room) + 3 - 1 disabled
 });

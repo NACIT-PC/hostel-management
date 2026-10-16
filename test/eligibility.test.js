@@ -1,6 +1,3 @@
-/**
- * Eligibility rules: fee threshold, gender/year compatibility and health.
- */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -42,14 +39,12 @@ test('the first deposit is required before allocation', () => {
     (error) => error.code === 'NOT_ELIGIBLE' && /deposit/i.test(error.message),
   );
 
-  // A partial payment is still not enough.
   feeService.recordPayment(
     { studentIdentifier: student.id, amount: 30000, feeType: 'first_deposit', method: 'Mobile money' },
     actors.clerk,
   );
   assert.equal(feeService.getFeeSummary(student.id).meetsRequirement, false);
 
-  // Once the threshold is crossed the student becomes allocatable.
   feeService.recordPayment(
     { studentIdentifier: student.id, amount: 20000, feeType: 'balance', method: 'Cash' },
     actors.clerk,
@@ -79,17 +74,14 @@ test('gender and year/form rules are enforced', () => {
 
   const female = createStudent(actors, 'G-1', { gender: 'Female', yearForm: 'Form 1', pay: 50000 });
 
-  // Girls hall accepts her.
   const girlsBed = hostelService.listFreeBeds({ hostelId: girls.id })[0];
   assert.equal(allocationService.validatePlacement(female.id, girlsBed.bed_id).ok, true);
 
-  // Boys hall refuses her on gender.
   const boysBed = hostelService.listFreeBeds({ hostelId: boys.id })[0];
   const genderCheck = allocationService.validatePlacement(female.id, boysBed.bed_id);
   assert.equal(genderCheck.ok, false);
   assert.match(genderCheck.reasons.join(' '), /male hostel/i);
 
-  // A Year 2 male is refused by the Form 1-restricted boys hall.
   const senior = createStudent(actors, 'G-2', { gender: 'Male', yearForm: 'Year 2', pay: 50000 });
   const yearCheck = matching.hostelAcceptsStudent(boys, studentService.resolveStudent(senior.id));
   assert.equal(yearCheck.ok, false);
@@ -100,7 +92,6 @@ test('required health conditions restrict which beds are eligible', () => {
   const actors = freshSetup();
   const { girls } = buildHostels(actors);
 
-  // Only G1 is wheelchair accessible and on the ground floor.
   hostelService.addRoom(
     { hostelId: girls.id, roomNumber: 'G1', floor: 0, capacity: 1, amenities: 'WHEELCHAIR_ACCESS,NEAR_BATHROOM' },
     actors.admin,
@@ -132,7 +123,6 @@ test('allocation fails when no bed can satisfy a required condition', () => {
     (error) => error.code === 'NOT_ELIGIBLE',
   );
 
-  // A *preferred* condition does not block allocation.
   studentService.removeHealthCondition(
     studentService.getRequirements(student.id)[0].id,
     actors.clerk,

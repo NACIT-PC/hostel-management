@@ -1,8 +1,3 @@
-/**
- * Terminal output helpers: colours, tables and small layout primitives.
- * No external dependency - keeps the CLI output readable everywhere.
- */
-
 const useColor = process.stdout.isTTY === true && !process.env.NO_COLOR;
 
 const wrap = (code, reset = 39) => (text) =>
@@ -60,13 +55,6 @@ const align = (text, width, alignment) => {
   return value.padEnd(width);
 };
 
-/**
- * Render an ASCII table.
- *
- * @param {Array<object>} rows
- * @param {Array<{key: string, header: string, align?: 'left'|'right'|'center', format?: (row: object) => any}>} columns
- * @param {{ empty?: string, maxWidth?: number }} [options]
- */
 export function table(rows, columns, options = {}) {
   const { empty = 'No records found.', maxWidth = 160 } = options;
   if (!rows || rows.length === 0) return color.dim(empty);
@@ -84,7 +72,6 @@ export function table(rows, columns, options = {}) {
     return Math.max(preferred, index === 0 ? 3 : 3);
   });
 
-  // Shrink the widest column if the table would be too wide overall.
   const totalWidth = () =>
     widths.reduce((sum, width) => sum + width, 0) + (columns.length - 1) * 3;
 
@@ -140,10 +127,6 @@ export function dateTime(value) {
   return String(value).replace('T', ' ').slice(0, 19);
 }
 
-/**
- * Privacy helper: sensitive free-text is only shown to authorised actors.
- * The presence of a note is always visible, its content never leaks by default.
- */
 export function sensitive(value, reveal = false) {
   if (value === undefined || value === null || String(value).trim() === '') return color.dim('-');
   return reveal ? String(value) : `${color.yellow('[private]')} ${color.dim('(restricted)')}`;

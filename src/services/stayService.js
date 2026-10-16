@@ -1,12 +1,3 @@
-/**
- * Check-in and check-out.
- *
- * check-in  : assigned -> checked_in   (re-verifies fee eligibility)
- * check-out : checked_in -> checked_out (frees the bed immediately)
- *
- * Every movement is written to `stay_logs` (operational history) and
- * `audit_log` (who did what).
- */
 import { getDb, transact } from '../db/connection.js';
 import { assertPermission, PERMISSIONS } from '../security/permissions.js';
 import { log as auditLog } from './auditService.js';
@@ -24,9 +15,6 @@ function recordStay({ allocation, action, actor, note = null }) {
     .run(allocation.id, allocation.student_id, allocation.bed_id, action, actor?.id ?? null, note);
 }
 
-/**
- * Check a student in. Accepts a student code/id or an allocation id.
- */
 export function checkIn(identifier, actor, { allowIneligible = false, note = null } = {}) {
   assertPermission(actor, PERMISSIONS.STAY_MANAGE);
 
@@ -76,10 +64,6 @@ export function checkIn(identifier, actor, { allowIneligible = false, note = nul
   });
 }
 
-/**
- * Check a student out, freeing the bed. Also allows cancelling a not-yet
- * checked-in assignment when `cancelIfAssigned` is true.
- */
 export function checkOut(identifier, actor, { note = null, cancelIfAssigned = false } = {}) {
   assertPermission(actor, PERMISSIONS.STAY_MANAGE);
   const allocation = resolveAllocation(identifier);
@@ -180,7 +164,6 @@ export function listStayLogs({ limit = 50, studentIdentifier = null, hostelId = 
     .all(...params, Number(limit));
 }
 
-/** Students currently checked in (not merely assigned). */
 export function currentResidents({ hostelId = null, assignedOnly = false } = {}) {
   const conditions = [assignedOnly ? "a.status IN ('assigned','checked_in')" : "a.status = 'checked_in'"];
   const params = [];
@@ -204,7 +187,6 @@ export function currentResidents({ hostelId = null, assignedOnly = false } = {})
     .all(...params);
 }
 
-/** A student's full stay history. */
 export function studentStayHistory(studentIdentifier) {
   const student = resolveStudent(studentIdentifier);
   return getDb()

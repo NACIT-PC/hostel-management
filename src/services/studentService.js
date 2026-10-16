@@ -1,14 +1,3 @@
-/**
- * Student registration and private health information.
- *
- * Privacy model:
- *  - `students.health_notes` and `student_health_conditions.notes` are never
- *    returned by the normal read paths.
- *  - `getHealthProfile(..., { reveal: true })` requires the `health.reveal`
- *    permission and writes an entry to the audit trail every single time.
- *  - Allocation logic reads *codes and levels only* (never the free text),
- *    so the allocator can honour medical needs without exposing details.
- */
 import { getDb, transact } from '../db/connection.js';
 import { GENDERS, YEAR_FORMS, HEALTH_REQUIREMENT_CODES, HEALTH_REQUIREMENT_LEVELS, LIMITS } from '../config.js';
 import { assertPermission, PERMISSIONS, can } from '../security/permissions.js';
@@ -65,7 +54,6 @@ export function getStudentById(id) {
   return getDb().prepare('SELECT * FROM students WHERE id = ?').get(Number(id));
 }
 
-/** Find by internal id or by student code (case-insensitive). */
 export function resolveStudent(identifier) {
   if (identifier === undefined || identifier === null || String(identifier).trim() === '') {
     throw new ValidationError('Student identifier is required.');
@@ -188,11 +176,6 @@ export function updateStudent(identifier, changes, actor) {
   return getStudentById(student.id);
 }
 
-/**
- * Write (or clear) the free-text health notes.
- * Kept separate from updateStudent so it can be permission-checked and audited
- * differently, and so the notes never travel through a generic "update" path.
- */
 export function setHealthNotes(identifier, notes, actor) {
   assertPermission(actor, PERMISSIONS.STUDENT_MANAGE);
   const student = resolveStudent(identifier);
@@ -272,7 +255,6 @@ export function removeHealthCondition(conditionId, actor) {
   return true;
 }
 
-/** Codes + levels only - safe for the allocator (no free text). */
 export function getRequirements(studentId) {
   return getDb()
     .prepare(
@@ -281,10 +263,6 @@ export function getRequirements(studentId) {
     .all(Number(studentId));
 }
 
-/**
- * Full health profile including private notes.
- * @param {{reveal?: boolean, actor?: object, reason?: string}} options
- */
 export function getHealthProfile(identifier, { reveal = false, actor = null, reason = null } = {}) {
   const student = resolveStudent(identifier);
   const db = getDb();
@@ -340,7 +318,6 @@ export function getHealthProfile(identifier, { reveal = false, actor = null, rea
   };
 }
 
-/** Compact, non-sensitive summary used in listings. */
 export function healthIndicator(studentRow) {
   if (!studentRow) return 'No';
   if (studentRow.health_condition_count > 0 || studentRow.has_health_notes) return 'Yes';
@@ -351,7 +328,6 @@ export function canRevealHealth(actor) {
   return can(actor?.role, PERMISSIONS.HEALTH_REVEAL);
 }
 
-/** Delete a student that has no operational history. */
 export function deleteStudent(identifier, actor) {
   assertPermission(actor, PERMISSIONS.STUDENT_MANAGE);
   const student = resolveStudent(identifier);

@@ -1,6 +1,3 @@
-/**
- * Authentication and user administration.
- */
 import { getDb } from '../db/connection.js';
 import { hashPassword, verifyPassword } from '../security/password.js';
 import { assertPermission, PERMISSIONS, ROLE_NAMES } from '../security/permissions.js';
@@ -38,8 +35,6 @@ export function createUser(
   actor = null,
   { selfService = false } = {},
 ) {
-  // The first account bootstraps the system and needs no actor. Later accounts
-  // require an administrator unless self-service sign-up is allowed.
   if (countUsers() > 0 && !selfService) assertPermission(actor, PERMISSIONS.USER_MANAGE);
 
   const cleanUsername = asCode(username, 'Username', { max: 40 }).toLowerCase();
@@ -87,10 +82,6 @@ export function listUsers() {
     .all();
 }
 
-/**
- * Verify credentials.
- * @returns {{id:number,username:string,full_name:string,role:string}|null}
- */
 export function authenticate(username, password) {
   const row = getDb()
     .prepare('SELECT * FROM users WHERE username = ? COLLATE NOCASE')

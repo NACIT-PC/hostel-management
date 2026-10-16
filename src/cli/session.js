@@ -1,6 +1,3 @@
-/**
- * Session handling for the interactive CLI: login, logout and first-run setup.
- */
 import * as authService from '../services/authService.js';
 import { getInstitutionName } from '../services/settingsService.js';
 import { assertPermission, can, describePermissions, PERMISSIONS } from '../security/permissions.js';
@@ -37,7 +34,6 @@ export function requirePermission(permission) {
 
 export { PERMISSIONS, roleLabel, describePermissions, can };
 
-/** Create the first administrator when the database has no users at all. */
 export async function firstRunSetup() {
   print(heading('First run - create the administrator account'));
   if (authService.countUsers() > 0) return null;
@@ -78,10 +74,6 @@ async function asPasswordPrompt(message) {
   }
 }
 
-/**
- * Interactive login. Returns the authenticated user, or null when the user
- * chooses to quit (including after too many failed attempts).
- */
 export async function login({ maxAttempts = 3 } = {}) {
   let attempts = 0;
   while (attempts < maxAttempts) {
@@ -120,12 +112,10 @@ export async function login({ maxAttempts = 3 } = {}) {
   return null;
 }
 
-/** Minimal bootstrap helper for command-line (non-interactive) usage. */
 export function describeRole(user) {
   return `${roleLabel(user.role)}: ${describePermissions(user.role).join(', ')}`;
 }
 
-/** Startup choice: sign in, create an account, or leave. */
 export async function chooseAction() {
   const message =
     authService.countUsers() === 0
@@ -138,11 +128,6 @@ export async function chooseAction() {
   ]);
 }
 
-/**
- * Create an account. The first account is the administrator; afterwards anyone
- * can sign up (self-service).
- * @returns {Promise<boolean>} true when an account was created.
- */
 export async function signUp() {
   if (authService.countUsers() === 0) {
     const created = await firstRunSetup();

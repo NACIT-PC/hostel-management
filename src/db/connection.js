@@ -1,11 +1,3 @@
-/**
- * SQLite connection management.
- *
- * - Foreign keys are enabled on every connection (referential integrity).
- * - WAL journaling for durability and concurrent reads.
- * - `initDatabase()` executes the idempotent schema script and inserts the
- *   default settings rows.
- */
 import fs from 'node:fs';
 import path from 'node:path';
 import Database from 'better-sqlite3';
@@ -37,10 +29,6 @@ function seedDefaultSettings(db) {
   }
 }
 
-/**
- * Create/upgrade the schema. Safe to call repeatedly.
- * @param {{ force?: boolean }} [options] `force` deletes the database file first.
- */
 export function initDatabase({ force = false } = {}) {
   if (force) removeDatabaseFiles();
   const db = getDb();
@@ -50,7 +38,6 @@ export function initDatabase({ force = false } = {}) {
   return db;
 }
 
-/** Ensure the schema exists, creating it silently when missing. */
 export function ensureDatabase() {
   const db = getDb();
   const { count } = db
@@ -81,7 +68,6 @@ export function removeDatabaseFiles() {
   }
 }
 
-/** Run a function inside a SQLite transaction (rolls back on throw). */
 export function transact(fn) {
   return getDb().transaction(fn)();
 }

@@ -1,6 +1,3 @@
-/**
- * Fee registration menu.
- */
 import { FEE_TYPES, PAYMENT_METHODS } from '../../config.js';
 import { PERMISSIONS } from '../../security/permissions.js';
 import * as feeService from '../../services/feeService.js';

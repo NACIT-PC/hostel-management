@@ -1,4 +1,3 @@
-
 import { listHostels, listFreeBeds, hostelRuleText, getHostel } from './hostelService.js';
 import { getFeeSummary } from './feeService.js';
 import { resolveStudent, getRequirements } from './studentService.js';
@@ -6,7 +5,6 @@ import { hostelAcceptsStudent, evaluateBed, requirementLabel } from './matching.
 import { getCurrency, getFirstDepositRequirement } from './settingsService.js';
 import { money as formatMoney } from '../utils/format.js';
 
-/** Fee-only check (used before check-in as well). */
 export function assessFees(studentIdentifier) {
   const student = resolveStudent(studentIdentifier);
   const summary = getFeeSummary(student.id);
@@ -19,10 +17,6 @@ export function assessFees(studentIdentifier) {
   };
 }
 
-/**
- * Per-hostel verdict for one student.
- * @returns {Array<object>} one entry per hostel with checks + suitable bed count
- */
 export function assessHostels(studentIdentifier, { onlyCompatible = false } = {}) {
   const student = resolveStudent(studentIdentifier);
   const fee = assessFees(student.id);
@@ -101,7 +95,6 @@ export function assessHostels(studentIdentifier, { onlyCompatible = false } = {}
     .filter((entry) => (onlyCompatible ? entry.checks[0].ok : true));
 }
 
-/** Overall verdict for one student across every hostel. */
 export function assessStudent(studentIdentifier) {
   const student = resolveStudent(studentIdentifier);
   const fee = assessFees(student.id);
@@ -143,7 +136,6 @@ export function assessStudent(studentIdentifier) {
   };
 }
 
-/** Convenience: is this student allowed to be checked into this hostel? */
 export function assessForHostel(studentIdentifier, hostelIdentifier) {
   const hostel = getHostel(hostelIdentifier);
   const entry = assessHostels(studentIdentifier).find((item) => item.hostel.id === hostel.id);

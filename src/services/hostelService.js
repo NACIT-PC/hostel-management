@@ -1,10 +1,3 @@
-/**
- * Hostel inventory: hostels, rooms and beds.
- *
- * Hostels keep denormalised `total_rooms` / `total_beds` counters that are
- * always recalculated from the actual rooms/beds inside the same transaction,
- * so the inventory can never silently drift.
- */
 import { getDb, transact } from '../db/connection.js';
 import {
   HOSTEL_GENDERS,
@@ -18,10 +11,6 @@ import { assertPermission, PERMISSIONS } from '../security/permissions.js';
 import { log as auditLog } from './auditService.js';
 import { ConflictError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { asText, asInteger, asOneOf, asBoolean, asAmenities } from '../utils/validate.js';
-
-/* ------------------------------------------------------------------ */
-/* Lookups                                                             */
-/* ------------------------------------------------------------------ */
 
 export function listHostels({ includeEmpty = true } = {}) {
   const rows = getDb()
@@ -72,10 +61,6 @@ export function hostelRuleText(hostel) {
   const gender = hostel.gender === 'Mixed' ? 'Mixed gender' : `${hostel.gender} only`;
   return `${gender}, ${describeCategory(hostel.category)}`;
 }
-
-/* ------------------------------------------------------------------ */
-/* Rooms and beds                                                      */
-/* ------------------------------------------------------------------ */
 
 export function listRooms(hostelId, { includeUnavailable = true } = {}) {
   const rows = getDb()
@@ -140,7 +125,6 @@ export function getBed(bedId) {
   return row;
 }
 
-/** Free (unoccupied, enabled) beds, optionally filtered. */
 export function listFreeBeds({ hostelId = null } = {}) {
   const conditions = ['is_occupied = 0', 'bed_enabled = 1', 'room_enabled = 1'];
   const params = [];
@@ -156,18 +140,12 @@ export function listFreeBeds({ hostelId = null } = {}) {
     .all(...params);
 }
 
-/* ------------------------------------------------------------------ */
-/* Mutations                                                           */
-/* ------------------------------------------------------------------ */
-
-/** Distribute `totalBeds` beds across `totalRooms` rooms as evenly as possible. */
 export function distributeBeds(totalBeds, totalRooms) {
   const base = Math.floor(totalBeds / totalRooms);
   const remainder = totalBeds % totalRooms;
   return Array.from({ length: totalRooms }, (_, index) => base + (index < remainder ? 1 : 0));
 }
 
-/** Bed layout for a room of a given capacity: bunk pairs then single beds. */
 export function bedLayout(capacity) {
   if (capacity <= 1) return [{ label: 'B1', bunkLevel: 'SINGLE' }];
   const layout = [
@@ -207,12 +185,6 @@ function syncHostelCounts(hostelId) {
   return counts;
 }
 
-/**
- * Register a hostel and generate its room/bed inventory.
- *
- * @param {{name:string, gender:string, category?:string, totalRooms:number,
- *          totalBeds:number, roomsPerFloor?:number, description?:string}} input
- */
 export function createHostel(input, actor) {
   assertPermission(actor, PERMISSIONS.HOSTEL_MANAGE);
 
@@ -496,7 +468,6 @@ export function removeRoom(roomId, actor) {
   return true;
 }
 
-/** Compare stored counters with reality - used by the inventory report. */
 export function verifyInventory() {
   return getDb()
     .prepare(

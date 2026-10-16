@@ -1,7 +1,3 @@
-/**
- * Service barrel. Services import each other directly by file (never through
- * this barrel) so that this module cannot create import cycles.
- */
 export * as auditService from './auditService.js';
 export * as authService from './authService.js';
 export * as settingsService from './settingsService.js';

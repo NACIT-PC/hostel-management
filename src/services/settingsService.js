@@ -1,7 +1,3 @@
-/**
- * Settings service - small key/value store for institution-wide policy
- * (fee threshold, currency, institution name).
- */
 import { getDb } from '../db/connection.js';
 import { SETTING_KEYS, DEFAULT_SETTINGS } from '../config.js';
 import { assertPermission, PERMISSIONS } from '../security/permissions.js';

@@ -1,6 +1,3 @@
-/**
- * Check-in / check-out menu.
- */
 import { PERMISSIONS, can } from '../../security/permissions.js';
 import * as stayService from '../../services/stayService.js';
 import * as allocationService from '../../services/allocationService.js';

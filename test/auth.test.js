@@ -1,6 +1,3 @@
-/**
- * Authentication and role-based authorization.
- */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { freshSetup, authService, hostelService, security } from './helpers.js';
@@ -14,14 +11,12 @@ test('authentication verifies credentials and rejects bad passwords', () => {
   const session = authService.authenticate('warden', 'WardenPass12');
   assert.equal(session.role, 'warden');
   assert.equal(session.username, 'warden');
-  // The password hash is never part of the returned session.
   assert.equal('password_hash' in session, false);
 });
 
 test('role permissions gate privileged actions', () => {
   const actors = freshSetup();
 
-  // Clerks cannot manage hostels or read the audit trail.
   assert.equal(security.can('clerk', security.PERMISSIONS.HOSTEL_MANAGE), false);
   assert.equal(security.can('clerk', security.PERMISSIONS.AUDIT_VIEW), false);
   assert.throws(
@@ -33,7 +28,6 @@ test('role permissions gate privileged actions', () => {
     (error) => error.code === 'PERMISSION_DENIED',
   );
 
-  // A warden can manage hostels but still cannot read the audit trail.
   assert.doesNotThrow(() =>
     hostelService.createHostel(
       { name: 'Allowed Hall', gender: 'Male', category: 'ALL', totalRooms: 1, totalBeds: 1 },

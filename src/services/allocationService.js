@@ -1,15 +1,3 @@
-/**
- * Bed allocation.
- *
- * Two entry points:
- *   autoAllocate()   - pick the best suitable bed automatically (used by the
- *                      "assign eligible student" flow and the CLI).
- *   allocateToBed()  - manual placement, still fully validated.
- *
- * Hard rules (never overridable): gender/year compatibility, fee eligibility,
- * required health conditions, bed free + enabled.
- * Soft rules (preferences): advisory health codes, room balance.
- */
 import { getDb, transact } from '../db/connection.js';
 import { assertPermission, PERMISSIONS } from '../security/permissions.js';
 import { log as auditLog } from './auditService.js';
@@ -20,10 +8,6 @@ import { hostelAcceptsStudent, evaluateBed, requirementSatisfied } from './match
 import { getFirstDepositRequirement } from './settingsService.js';
 import { ConflictError, EligibilityError, NotFoundError, ValidationError } from '../utils/errors.js';
 import { money as formatMoney } from '../utils/format.js';
-
-/* ------------------------------------------------------------------ */
-/* Queries                                                             */
-/* ------------------------------------------------------------------ */
 
 export function getActiveAllocation(studentId) {
   return getDb()
@@ -92,10 +76,6 @@ export function listAllocations({ status = null, hostelId = null, studentIdentif
     .all(...params, Number(limit));
 }
 
-/**
- * Rank every free bed for a student.
- * @returns {{student: object, fee: object, candidates: Array<object>, rejected: Array<object>}}
- */
 export function findCandidateBeds(studentIdentifier, { hostelIdentifier = null } = {}) {
   const student = resolveStudent(studentIdentifier);
   const fee = getFeeSummary(student.id);
@@ -134,10 +114,6 @@ export function findCandidateBeds(studentIdentifier, { hostelIdentifier = null }
   return { student, fee, requirements, candidates, rejected, hostelFilter };
 }
 
-/* ------------------------------------------------------------------ */
-/* Guarantees                                                          */
-/* ------------------------------------------------------------------ */
-
 function assertFeeEligible(studentId, { allowPartial = false } = {}) {
   const summary = getFeeSummary(studentId);
   if (summary.meetsRequirement) return summary;
@@ -168,7 +144,6 @@ function assertStudentActive(studentId) {
   }
 }
 
-/** Checks a single bed for a single student; returns {ok, reasons}. */
 export function validatePlacement(studentIdentifier, bedId) {
   const student = resolveStudent(studentIdentifier);
   const bed = getBed(bedId);
@@ -209,10 +184,6 @@ export function validatePlacement(studentIdentifier, bedId) {
   };
 }
 
-/* ------------------------------------------------------------------ */
-/* Mutations                                                           */
-/* ------------------------------------------------------------------ */
-
 function insertAllocation({ studentId, bedId, actor, notes = null }) {
   const db = getDb();
   try {
@@ -228,12 +199,6 @@ function insertAllocation({ studentId, bedId, actor, notes = null }) {
   }
 }
 
-/**
- * Automatically place an eligible student in the best available bed.
- *
- * Score order: preference matches desc, room occupancy asc (spread students),
- * floor asc (smaller room numbers first), hostel name.
- */
 export function autoAllocate(studentIdentifier, actor, { hostelIdentifier = null, notes = null } = {}) {
   assertPermission(actor, PERMISSIONS.ALLOCATION_MANAGE);
   const student = resolveStudent(studentIdentifier);
@@ -311,11 +276,6 @@ function roomOccupancy(roomId) {
   );
 }
 
-/**
- * Place a student in a specific bed.
- * Requires `confirmOverride: true` when only *preferred* conditions are missed
- * (never for required ones - those are refused outright).
- */
 export function allocateToBed(studentIdentifier, bedId, actor, { confirmOverride = false, reason = null } = {}) {
   assertPermission(actor, PERMISSIONS.ALLOCATION_MANAGE);
   const check = validatePlacement(studentIdentifier, bedId);
@@ -362,7 +322,6 @@ export function allocateToBed(studentIdentifier, bedId, actor, { confirmOverride
   });
 }
 
-/** Cancel an assignment (student never checked in). */
 export function cancelAllocation(allocationId, actor, { reason = null } = {}) {
   assertPermission(actor, PERMISSIONS.ALLOCATION_MANAGE);
   const allocation = getAllocationById(allocationId);
@@ -393,7 +352,6 @@ export function cancelAllocation(allocationId, actor, { reason = null } = {}) {
   return getAllocationById(allocation.id);
 }
 
-/** Move an assigned (not yet checked-in) student to a different bed. */
 export function reassignBed(studentIdentifier, newBedId, actor, options = {}) {
   assertPermission(actor, PERMISSIONS.ALLOCATION_MANAGE);
   const student = resolveStudent(studentIdentifier);
@@ -409,7 +367,6 @@ export function reassignBed(studentIdentifier, newBedId, actor, options = {}) {
   });
 }
 
-/** Enrich a bed row with the reason a student may or may not use it. */
 export function explainBedForStudent(studentIdentifier, bedId) {
   const student = resolveStudent(studentIdentifier);
   const bed = getBed(bedId);

@@ -1,6 +1,3 @@
-/**
- * Allocation and stay lifecycle: double-booking protection, check-in/out.
- */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -56,7 +53,6 @@ test('the database refuses two active allocations for the same bed', () => {
   );
   assert.throws(() => insert.run(second.id, allocation.bed_id, actors.warden.id), /UNIQUE/i);
 
-  // Once the first allocation is cancelled the bed is reusable.
   allocationService.cancelAllocation(allocation.id, actors.warden);
   assert.doesNotThrow(() => insert.run(second.id, allocation.bed_id, actors.warden.id));
 });
@@ -74,7 +70,6 @@ test('check-in and check-out move a student through the full lifecycle', () => {
   assert.equal(stayService.currentResidents({ hostelId: hostel.id }).length, 1);
   assert.equal(hostelService.listFreeBeds({ hostelId: hostel.id }).length, 1);
 
-  // Checking in twice is a conflict.
   assert.throws(
     () => stayService.checkIn(student.id, actors.warden),
     (error) => error.code === 'CONFLICT',
@@ -83,7 +78,6 @@ test('check-in and check-out move a student through the full lifecycle', () => {
   const checkedOut = stayService.checkOut(student.id, actors.warden);
   assert.equal(checkedOut.status, 'checked_out');
   assert.equal(stayService.currentResidents({ hostelId: hostel.id }).length, 0);
-  // Both beds are free again.
   assert.equal(hostelService.listFreeBeds({ hostelId: hostel.id }).length, 2);
 
   const logs = stayService.listStayLogs({ studentIdentifier: student.id });
@@ -111,11 +105,9 @@ test('an assigned bed must be cancelled explicitly, not checked out', () => {
 
 test('check-in refuses a student whose deposit is incomplete', () => {
   const { actors } = setup();
-  // Allocate while the fee is complete...
   const student = createStudent(actors, 'OC-1', { pay: 50000 });
   allocationService.autoAllocate(student.id, actors.warden);
 
-  // ...then correct the fee record downward (eligibility is always re-derived).
   const firstPaymentId = getDb()
     .prepare('SELECT id FROM fee_payments WHERE student_id = ? ORDER BY id LIMIT 1')
     .get(student.id).id;
@@ -126,7 +118,6 @@ test('check-in refuses a student whose deposit is incomplete', () => {
     (error) => error.code === 'NOT_ELIGIBLE',
   );
 
-  // Warden override is still possible and is recorded.
   const overridden = stayService.checkIn(student.id, actors.warden, { allowIneligible: true });
   assert.equal(overridden.status, 'checked_in');
 });

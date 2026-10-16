@@ -1,16 +1,5 @@
-/**
- * Audit trail.
- *
- * Every state change and every access to private health data is recorded.
- * Audit writes never throw: a failure to log must not break the operation,
- * but it is reported on stderr so it cannot pass unnoticed.
- */
 import { getDb } from '../db/connection.js';
 
-/**
- * @param {{actor?: {id?: number, username?: string}|null, action: string,
- *          entity?: string, entityId?: number|string|null, detail?: string|object|null}} entry
- */
 export function log({ actor = null, action, entity = null, entityId = null, detail = null }) {
   try {
     const serialised =

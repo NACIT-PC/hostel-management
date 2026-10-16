@@ -1,19 +1,9 @@
-/**
- * Availability and documentational reporting queries.
- *
- * These wrap the SQL views so the CLI only prints, never computes.
- */
 import { getDb } from '../db/connection.js';
 import { listHostels, getHostel, verifyInventory } from './hostelService.js';
 import { feeStatusReport } from './feeService.js';
 import { currentResidents as residents } from './stayService.js';
 import { getCurrency, getFirstDepositRequirement, getInstitutionName } from './settingsService.js';
 
-/* ------------------------------------------------------------------ */
-/* Availability                                                        */
-/* ------------------------------------------------------------------ */
-
-/** Real-time availability for one hostel or every hostel. */
 export function availability({ hostelIdentifier = null } = {}) {
   const hostels = hostelIdentifier ? [getHostel(hostelIdentifier)] : listHostels();
   const db = getDb();
@@ -42,7 +32,6 @@ export function availability({ hostelIdentifier = null } = {}) {
   });
 }
 
-/** Room-level availability (optionally only rooms with free beds). */
 export function roomAvailability({ hostelIdentifier = null, onlyFree = false } = {}) {
   const conditions = [];
   const params = [];
@@ -65,7 +54,6 @@ export function roomAvailability({ hostelIdentifier = null, onlyFree = false } =
     .all(...params);
 }
 
-/** Free beds with the full physical description (used by the allocator UI). */
 export function freeBedList({ hostelIdentifier = null } = {}) {
   const conditions = ['o.is_occupied = 0', 'o.bed_enabled = 1', 'o.room_enabled = 1'];
   const params = [];
@@ -83,7 +71,6 @@ export function freeBedList({ hostelIdentifier = null } = {}) {
     .all(...params);
 }
 
-/** Which student occupies which room - the classic documentational query. */
 export function studentsByRoom({ hostelIdentifier = null } = {}) {
   const conditions = ["o.is_occupied = 1"];
   const params = [];
@@ -102,10 +89,6 @@ export function studentsByRoom({ hostelIdentifier = null } = {}) {
     )
     .all(...params);
 }
-
-/* ------------------------------------------------------------------ */
-/* Occupancy & students                                                */
-/* ------------------------------------------------------------------ */
 
 export function occupancyByHostel() {
   return getDb()
@@ -127,7 +110,6 @@ export function currentResidentsReport({ hostelIdentifier = null, assignedOnly =
   return residents({ hostelId: hostel?.id ?? null, assignedOnly });
 }
 
-/** Students registered but with no active bed. */
 export function unallocatedStudents() {
   return getDb()
     .prepare(
@@ -163,7 +145,6 @@ export function inventoryReport() {
   return verifyInventory();
 }
 
-/** Counts used on the dashboard. */
 export function dashboard() {
   const db = getDb();
   const counts = db
@@ -192,10 +173,6 @@ export function dashboard() {
   };
 }
 
-/**
- * Health/sensitivity accommodation overview WITHOUT revealing private text:
- * only the codes, levels and where those students are placed.
- */
 export function specialNeedsOverview({ hostelIdentifier = null } = {}) {
   const conditions = [];
   const params = [];

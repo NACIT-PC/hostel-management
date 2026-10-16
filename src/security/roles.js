@@ -1,8 +1,3 @@
-/**
- * Role definitions. Kept separate from permissions.js to avoid a circular
- * import between the permission matrix and its helpers.
- */
-
 export const ROLE_NAMES = {
   admin: 'Administrator',
   warden: 'Warden',

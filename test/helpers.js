@@ -1,12 +1,3 @@
-/**
- * Shared test helpers.
- *
- * IMPORTANT: `HOSTEL_DB_PATH` must be set *before* `src/config.js` is imported,
- * because config freezes `DB_PATH` at module-evaluation time. This module sets
- * the environment variable first and only then dynamically imports the
- * application modules, so every test file talks to its own throwaway database
- * and never touches `data/hostel.db`.
- */
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -38,12 +29,10 @@ export const {
 
 export const { initDatabase, getDb, closeDatabase, transact } = connection;
 
-/** Drop and recreate the schema so every test starts from a clean database. */
 export function resetDatabase() {
   initDatabase({ force: true });
 }
 
-/** Create a fresh admin/warden/clerk set; returns lightweight actor stubs. */
 export function makeActors() {
   const admin = authService.createUser({
     username: 'admin',
@@ -67,13 +56,11 @@ export function makeActors() {
   };
 }
 
-/** Reset the database and return a fresh set of actors. */
 export function freshSetup() {
   resetDatabase();
   return makeActors();
 }
 
-/** Register a student and (optionally) pay the first deposit. */
 export function createStudent(actors, code, overrides = {}) {
   const { pay = null, ...rest } = overrides;
   const student = studentService.registerStudent(

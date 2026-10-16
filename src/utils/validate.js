@@ -1,10 +1,3 @@
-/**
- * Input validation helpers.
- *
- * Every helper either returns a clean, normalised value or throws a
- * ValidationError with a human readable message. Services use these so the
- * CLI, the command-line flags and the tests all get identical rules.
- */
 import { ValidationError } from './errors.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,7 +15,6 @@ export function asText(value, field, { min = 1, max = 200, optional = false } = 
   return text;
 }
 
-/** Short uppercase-ish business key e.g. matric number `NACIT/2026/001`. */
 export function asCode(value, field, { max = 40 } = {}) {
   const text = asText(value, field, { max });
   if (/\s/.test(text)) throw new ValidationError(`${field} must not contain spaces.`);
@@ -116,7 +108,6 @@ export function asPassword(value, field = 'Password') {
   return text;
 }
 
-/** Conference of amenities: "FAN, QUIET" -> "FAN,QUIET" with validated members. */
 export function asAmenities(value, allowed, field = 'Amenities') {
   if (value === undefined || value === null || String(value).trim() === '') return '';
   const parts = String(value)

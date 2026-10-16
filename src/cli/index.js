@@ -1,6 +1,3 @@
-/**
- * Interactive CLI entry point: banner -> login -> main menu -> submenus.
- */
 import { ensureDatabase } from '../db/connection.js';
 import { setSetting, getFirstDepositRequirement, getCurrency, getInstitutionName } from '../services/settingsService.js';
 import { changeOwnPassword, roleLabel } from '../services/authService.js';
@@ -54,10 +51,6 @@ export async function runInteractive() {
   }
 }
 
-/**
- * @returns {Promise<boolean>} true when the user wants to sign out and see the
- *                             login screen again; false to exit completely.
- */
 async function mainMenu(user) {
   const options = [
     { label: 'Dashboard', value: 'dashboard', permission: PERMISSIONS.REPORT_VIEW, run: showDashboard },
@@ -170,7 +163,6 @@ async function changePasswordFlow(user) {
   print(success('Your password has been changed.'));
 }
 
-/** Non-interactive helpers reused by the command-line interface. */
 export async function quickSetup(actor) {
   const currency = getCurrency();
   print(heading('Quick setup'));

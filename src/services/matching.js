@@ -1,16 +1,5 @@
-/**
- * Matching rules.
- *
- * These functions encode *why* a student may or may not be placed in a given
- * hostel/room/bed. They are pure (no database access) which keeps the rules
- * easy to unit-test and impossible to bypass accidentally.
- */
 import { HEALTH_REQUIREMENT_BY_CODE, ALL_YEARS } from '../config.js';
 
-/**
- * Hostel-level rules: gender and year/form restriction.
- * @returns {{ok: boolean, reasons: string[]}}
- */
 export function hostelAcceptsStudent(hostel, student) {
   const reasons = [];
   if (!hostel || !student) return { ok: false, reasons: ['Missing hostel or student record.'] };
@@ -31,7 +20,6 @@ export function hostelAcceptsStudent(hostel, student) {
   return { ok: reasons.length === 0, reasons };
 }
 
-/** Split the stored comma separated amenities string into a lookup set. */
 export function amenitySet(amenities) {
   return new Set(
     String(amenities ?? '')
@@ -41,10 +29,6 @@ export function amenitySet(amenities) {
   );
 }
 
-/**
- * Does a physical room+bed satisfy a requirement code?
- * @returns {boolean|null} `null` when the code is advisory only (not enforceable).
- */
 export function requirementSatisfied(code, room, bed) {
   const meta = HEALTH_REQUIREMENT_BY_CODE.get(code);
   if (!meta || !meta.enforceable) return null;
@@ -72,13 +56,6 @@ export function requirementSatisfied(code, room, bed) {
   }
 }
 
-/**
- * Evaluate a bed against a student's health requirements.
- *
- * @param {Array<{code: string, level: 'required'|'preferred'}>} requirements
- * @param {{floor:number, capacity:number, amenities:string}} room
- * @param {{bunk_level:string}} bed
- */
 export function evaluateBed(requirements, room, bed) {
   const unmetRequired = [];
   const unmetPreferred = [];
@@ -104,7 +81,6 @@ export function evaluateBed(requirements, room, bed) {
   };
 }
 
-/** Human readable label for a requirement code. */
 export function requirementLabel(code) {
   return HEALTH_REQUIREMENT_BY_CODE.get(code)?.label ?? code;
 }

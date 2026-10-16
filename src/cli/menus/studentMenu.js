@@ -1,6 +1,3 @@
-/**
- * Student registration menu, including the privacy-aware health workflows.
- */
 import { GENDERS, YEAR_FORMS, HEALTH_REQUIREMENT_CODES, HEALTH_REQUIREMENT_LEVELS } from '../../config.js';
 import { PERMISSIONS } from '../../security/permissions.js';
 import * as studentService from '../../services/studentService.js';

@@ -1,7 +1,3 @@
-/**
- * Presentation layer for the CLI: one place that knows how each domain object
- * should look on screen. Services return plain rows; this module formats them.
- */
 import { color, table, keyValue, money, dateTime, heading, section, bullet, success, warn, failure, info, sensitive } from '../utils/format.js';
 import { describeCategory, hostelRuleText } from '../services/hostelService.js';
 import { requirementLabel } from '../services/matching.js';
@@ -24,10 +20,6 @@ export function printError(error) {
   if (process.env.HOSTEL_DEBUG) print(color.dim(error?.stack ?? ''));
 }
 
-/* ------------------------------------------------------------------ */
-/* Banners                                                             */
-/* ------------------------------------------------------------------ */
-
 export function banner({ user }) {
   const title = 'Hostel Bed Allocation System';
   print(color.bold(color.cyan(`\n  ${title}`)));
@@ -41,10 +33,6 @@ export function banner({ user }) {
     );
   }
 }
-
-/* ------------------------------------------------------------------ */
-/* Hostels / rooms / beds                                              */
-/* ------------------------------------------------------------------ */
 
 export function printHostels(rows) {
   print(
@@ -139,10 +127,6 @@ export function printBedSearchResults(rows) {
     ]),
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Students                                                            */
-/* ------------------------------------------------------------------ */
 
 export function printStudents(rows) {
   print(
@@ -242,10 +226,6 @@ export function printStudentProfile({ summary, health, fee, allocation }) {
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* Fees                                                                */
-/* ------------------------------------------------------------------ */
-
 export function printPayments(rows, currency) {
   print(
     table(rows, [
@@ -301,10 +281,6 @@ export function printFeeStatusReport(rows, currency) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Eligibility                                                         */
-/* ------------------------------------------------------------------ */
-
 export function printEligibilityVerdict(verdict) {
   const { student, fee, requirements, hostels, placeable } = verdict;
   print(
@@ -350,10 +326,6 @@ export function printEligibilityVerdict(verdict) {
     }
   }
 }
-
-/* ------------------------------------------------------------------ */
-/* Allocations & stays                                                 */
-/* ------------------------------------------------------------------ */
 
 export function printAllocation(allocation) {
   print(
@@ -447,10 +419,6 @@ export function printStayLogs(rows) {
     ),
   );
 }
-
-/* ------------------------------------------------------------------ */
-/* Reports                                                             */
-/* ------------------------------------------------------------------ */
 
 export function printAvailability(rows) {
   print(
