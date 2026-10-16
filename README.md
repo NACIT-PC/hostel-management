@@ -79,6 +79,7 @@ erDiagram
         int id PK
         string username UK
         string full_name
+        string student_id "nullable, recorded at sign up"
         string password_hash
         string role "admin|warden|clerk"
         int active "0|1"
@@ -212,6 +213,9 @@ Functional requirements: §1.3 a–g. Dashed arrows are `<<include>>` dependenci
 
 Dependencies: UC4 includes UC3 · UC5 includes UC4, UC9 · UC6 includes UC4.
 
+Self-service sign-up (`src/cli/session.js`) requires a Student ID, recorded on
+`users.student_id` — covered by UC10.
+
 ### 2.3 Class Diagram
 
 Keeps information and shows data types. Entity attributes mirror
@@ -226,6 +230,7 @@ classDiagram
         +int id
         +string username
         +string fullName
+        +string studentId
         +string passwordHash
         +string role
         +int active
