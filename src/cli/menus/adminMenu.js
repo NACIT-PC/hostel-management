@@ -116,6 +116,7 @@ async function usersMenu(actor) {
                 { key: 'id', header: 'ID', align: 'right' },
                 { key: 'username', header: 'Username' },
                 { key: 'full_name', header: 'Full name' },
+                { key: 'student_id', header: 'Student ID' },
                 { key: 'role', header: 'Role', format: (row) => row.role },
                 { key: 'state', header: 'State', format: (row) => row.state },
                 { key: 'last_login_at', header: 'Last login', format: (row) => dateTime(row.last_login_at) },
@@ -279,7 +280,7 @@ async function setDepositFlow(actor) {
 
 async function setCurrencyFlow(actor) {
   const current = settingsService.getCurrency();
-  const value = await text('Currency label (e.g. TZS, KES, USD)', { field: 'Currency', default: current, max: 10 });
+  const value = await text('Currency label (e.g. MWK, USD)', { field: 'Currency', default: current, max: 10 });
   settingsService.setSetting(SETTING_KEYS.CURRENCY, value, { actor });
   print(success(`Currency label set to "${value}".`));
 }

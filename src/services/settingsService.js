@@ -25,7 +25,7 @@ export function getNumberSetting(key, fallback = 0) {
 }
 
 export function getCurrency() {
-  return getSetting(SETTING_KEYS.CURRENCY, 'TZS') || '';
+  return getSetting(SETTING_KEYS.CURRENCY, 'MWK') || '';
 }
 
 export function getFirstDepositRequirement() {

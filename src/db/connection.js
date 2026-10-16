@@ -29,11 +29,21 @@ function seedDefaultSettings(db) {
   }
 }
 
+// Adds columns introduced after a database was first created. CREATE TABLE
+// IF NOT EXISTS never alters an existing table, so older databases need this.
+function applyMigrations(db) {
+  const userColumns = db.prepare('PRAGMA table_info(users)').all().map((column) => column.name);
+  if (userColumns.length && !userColumns.includes('student_id')) {
+    db.exec('ALTER TABLE users ADD COLUMN student_id TEXT');
+  }
+}
+
 export function initDatabase({ force = false } = {}) {
   if (force) removeDatabaseFiles();
   const db = getDb();
   const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
   db.exec(schema);
+  applyMigrations(db);
   seedDefaultSettings(db);
   return db;
 }
@@ -46,9 +56,11 @@ export function ensureDatabase() {
   if (count === 0) {
     const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
     db.exec(schema);
+    applyMigrations(db);
     seedDefaultSettings(db);
     return { created: true, db };
   }
+  applyMigrations(db);
   seedDefaultSettings(db);
   return { created: false, db };
 }

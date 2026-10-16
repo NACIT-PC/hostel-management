@@ -1174,6 +1174,7 @@ export function buildProgram() {
           { key: 'id', header: 'ID', align: 'right' },
           { key: 'username', header: 'Username' },
           { key: 'full_name', header: 'Full name' },
+          { key: 'student_id', header: 'Student ID' },
           { key: 'role', header: 'Role' },
           { key: 'active', header: 'Active' },
           { key: 'last_login_at', header: 'Last login' },

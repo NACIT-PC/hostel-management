@@ -138,6 +138,7 @@ export async function signUp() {
 
   const username = await text('Username', { field: 'Username', max: 40 });
   const fullName = await text('Full name', { field: 'Full name', max: 120 });
+  const studentId = await text('Student ID', { field: 'Student ID', max: 40 });
   const role = await select('Role for the new account', [
     { name: `${roleLabel('warden')} - hostels, allocation and stays`, value: 'warden' },
     { name: `${roleLabel('clerk')} - student records, fees and stays`, value: 'clerk' },
@@ -151,9 +152,11 @@ export async function signUp() {
   }
 
   try {
-    const user = authService.createUser({ username, fullName, password: pass, role }, null, {
-      selfService: true,
-    });
+    const user = authService.createUser(
+      { username, fullName, studentId, password: pass, role },
+      null,
+      { selfService: true },
+    );
     print(success(`Account "${user.username}" created. You can now sign in.`));
     await pause();
     return true;

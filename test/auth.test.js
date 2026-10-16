@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { freshSetup, authService, hostelService, security } from './helpers.js';
+import { freshSetup, authService, hostelService, security, services } from './helpers.js';
 
 test('authentication verifies credentials and rejects bad passwords', () => {
   freshSetup();
@@ -55,4 +55,41 @@ test('a deactivated account cannot sign in', () => {
     () => authService.authenticate('warden', 'WardenPass12'),
     (error) => error.code === 'PERMISSION_DENIED',
   );
+});
+
+test('sign up records the student ID and requires it', () => {
+  freshSetup();
+
+  const user = authService.createUser(
+    {
+      username: 'newstudent',
+      fullName: 'New Student',
+      password: 'StudentPass1',
+      role: 'clerk',
+      studentId: 'STU-2026-001',
+    },
+    null,
+    { selfService: true },
+  );
+  assert.equal(user.student_id, 'STU-2026-001');
+  assert.equal(authService.getByUsername('newstudent').student_id, 'STU-2026-001');
+
+  const session = authService.authenticate('newstudent', 'StudentPass1');
+  assert.equal(session.student_id, 'STU-2026-001');
+
+  assert.throws(
+    () =>
+      authService.createUser(
+        { username: 'nostudent', fullName: 'No Student', password: 'StudentPass1', role: 'clerk' },
+        null,
+        { selfService: true },
+      ),
+    (error) => error.code === 'VALIDATION_ERROR',
+  );
+});
+
+test('currency defaults to Malawi kwacha (MWK)', () => {
+  freshSetup();
+  const { settingsService } = services;
+  assert.equal(settingsService.getCurrency(), 'MWK');
 });

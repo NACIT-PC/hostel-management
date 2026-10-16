@@ -16,7 +16,7 @@ for (const [key, label] of Object.entries(ROLE_NAMES)) {
   ROLE_ALIASES.set(String(label).toLowerCase(), key);
 }
 
-const PUBLIC_COLUMNS = 'id, username, full_name, role, active, last_login_at, created_at';
+const PUBLIC_COLUMNS = 'id, username, full_name, student_id, role, active, last_login_at, created_at';
 
 function asRole(value) {
   const key = ROLE_ALIASES.get(String(value ?? '').trim().toLowerCase());
@@ -43,7 +43,7 @@ export function countActiveAdmins() {
 }
 
 export function createUser(
-  { username, fullName, password, role },
+  { username, fullName, password, role, studentId },
   actor = null,
   { selfService = false } = {},
 ) {
@@ -53,13 +53,21 @@ export function createUser(
   const cleanName = asText(fullName, 'Full name', { max: 120 });
   const cleanRole = asRole(role);
   const cleanPassword = asPassword(password, 'Password');
+  const cleanStudentId =
+    studentId === undefined || studentId === null || String(studentId).trim() === ''
+      ? null
+      : asCode(studentId, 'Student ID', { max: 40 });
+
+  if (selfService && !cleanStudentId) {
+    throw new ValidationError('Student ID is required when signing up.');
+  }
 
   try {
     const info = getDb()
       .prepare(
-        'INSERT INTO users (username, full_name, password_hash, role) VALUES (?, ?, ?, ?)',
+        'INSERT INTO users (username, full_name, student_id, password_hash, role) VALUES (?, ?, ?, ?, ?)',
       )
-      .run(cleanUsername, cleanName, hashPassword(cleanPassword), cleanRole);
+      .run(cleanUsername, cleanName, cleanStudentId, hashPassword(cleanPassword), cleanRole);
 
     const user = getUserById(info.lastInsertRowid);
     auditLog({
@@ -119,6 +127,7 @@ export function authenticate(username, password) {
     id: row.id,
     username: row.username,
     full_name: row.full_name,
+    student_id: row.student_id,
     role: row.role,
   };
 }

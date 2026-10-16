@@ -95,7 +95,7 @@ export const DEFAULT_SETTINGS = [
   },
   {
     key: SETTING_KEYS.CURRENCY,
-    value: 'TZS',
+    value: 'MWK',
     label: 'Currency label used when printing amounts',
   },
 ];

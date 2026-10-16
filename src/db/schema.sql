@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS users (
   active        INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
   last_login_at TEXT,
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
-  updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
+  updated_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+  student_id    TEXT                             -- the Student ID recorded at sign up
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_role ON users (role);
