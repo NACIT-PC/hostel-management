@@ -1,12 +1,5 @@
 # Hostel Bed Allocation System
 
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-[![Mobile](https://img.shields.io/badge/Mobile-Phone_&_Tablet-000000?style=for-the-badge&logo=android&logoColor=white)](https://simpleicons.org/)
-[![Web](https://img.shields.io/badge/Web-Laptop_&_Desktop-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://simpleicons.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
 Design documentation for a system to manage bed allocation in a hostel.
 
 ## 1. System Requirements

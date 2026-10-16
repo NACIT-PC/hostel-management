@@ -1,0 +1,46 @@
+# ---- Node ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.pnpm-store/
+
+# ---- Environment / secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- Runtime database files ----
+data/
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.db-
+
+# ---- Logs / temp ----
+logs/
+*.log
+tmp/
+temp/
+_scratch/
+
+# ---- Editors / OS ----
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Build / coverage ----
+dist/
+build/
+coverage/
+.nyc_output/
