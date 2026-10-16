@@ -9,9 +9,11 @@ export class PromptExit extends Error {
   }
 }
 
+const THEME = { prefix: { done: '' } };
+
 async function ask(question) {
   try {
-    const answers = await inquirer.prompt([question]);
+    const answers = await inquirer.prompt([{ theme: THEME, ...question }]);
     return answers.value;
   } catch (error) {
     if (error?.name === 'ExitPromptError') throw new PromptExit();
