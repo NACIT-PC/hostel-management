@@ -8,11 +8,23 @@ import {
   ConflictError,
   PermissionError,
 } from '../utils/errors.js';
-import { asText, asCode, asPassword, asOneOf, asBoolean } from '../utils/validate.js';
+import { asText, asCode, asPassword, asBoolean } from '../utils/validate.js';
 
-const ROLES = Object.keys(ROLE_NAMES);
+const ROLE_ALIASES = new Map();
+for (const [key, label] of Object.entries(ROLE_NAMES)) {
+  ROLE_ALIASES.set(key.toLowerCase(), key);
+  ROLE_ALIASES.set(String(label).toLowerCase(), key);
+}
 
 const PUBLIC_COLUMNS = 'id, username, full_name, role, active, last_login_at, created_at';
+
+function asRole(value) {
+  const key = ROLE_ALIASES.get(String(value ?? '').trim().toLowerCase());
+  if (!key) {
+    throw new ValidationError(`Role must be one of: ${Object.values(ROLE_NAMES).join(', ')}.`);
+  }
+  return key;
+}
 
 export function roleLabel(role) {
   return ROLE_NAMES[role] ?? role;
@@ -39,7 +51,7 @@ export function createUser(
 
   const cleanUsername = asCode(username, 'Username', { max: 40 }).toLowerCase();
   const cleanName = asText(fullName, 'Full name', { max: 120 });
-  const cleanRole = asOneOf(role, ROLES, 'Role');
+  const cleanRole = asRole(role);
   const cleanPassword = asPassword(password, 'Password');
 
   try {
@@ -174,7 +186,7 @@ export function updateUserRole(targetUserId, role, actor) {
   assertPermission(actor, PERMISSIONS.USER_MANAGE);
   const target = getUserById(targetUserId);
   if (!target) throw new NotFoundError('User not found.');
-  const cleanRole = asOneOf(role, ROLES, 'Role');
+  const cleanRole = asRole(role);
   if (target.role === 'admin' && cleanRole !== 'admin' && countActiveAdmins() <= 1) {
     throw new ValidationError('At least one active administrator must remain.');
   }

@@ -37,7 +37,7 @@ export function checkIn(identifier, actor, { allowIneligible = false, note = nul
       `Fee deposit incomplete: ${formatMoney(fee.total_paid, fee.currency)} of ${formatMoney(
         fee.required,
         fee.currency,
-      )}. Collect the deposit or use the warden override.`,
+      )}. Collect the deposit or use the zomwe mukufuna override.`,
     );
   }
 

@@ -9,7 +9,7 @@ export class PromptExit extends Error {
   }
 }
 
-const THEME = { prefix: { done: '' } };
+const THEME = { prefix: { idle: '', done: '' } };
 
 async function ask(question) {
   try {

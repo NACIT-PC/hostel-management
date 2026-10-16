@@ -342,7 +342,7 @@ async function notesFlow(actor) {
   }
 
   print(color.dim('  Stored content is never echoed back on screen.'));
-  const notes = await text('New private notes (e.g. medical detail for the warden)', {
+  const notes = await text('New private notes (e.g. medical detail for the zomwe mukufuna)', {
     field: 'Health notes',
     max: 1000,
   });

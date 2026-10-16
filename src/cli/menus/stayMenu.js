@@ -89,7 +89,7 @@ async function checkInFlow(actor) {
       return;
     }
     const proceed = await confirm(
-      'Fee deposit is incomplete. Check this student in with a warden override?',
+      'Fee deposit is incomplete. Check this student in with a zomwe mukufuna override?',
       false,
     );
     if (!proceed) {
@@ -112,7 +112,7 @@ async function checkInFlow(actor) {
     ),
   );
   if (allowIneligible) {
-    print(warn('This check-in was recorded as a warden override (fee deposit incomplete).'));
+    print(warn('This check-in was recorded as a zomwe mukufuna override (fee deposit incomplete).'));
   }
 }
 

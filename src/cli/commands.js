@@ -612,7 +612,7 @@ export function buildProgram() {
       const reveal = Boolean(options.reveal);
       const actor = reveal ? await resolveActor(options) : null;
       if (reveal && !can(actor.role, PERMISSIONS.HEALTH_REVEAL)) {
-        throw new AppError('--reveal requires the health.reveal permission (admin or warden).');
+        throw new AppError('--reveal requires the health.reveal permission (admin or zomwe mukufuna).');
       }
 
       const health = studentService.getHealthProfile(student.id, {
@@ -1104,7 +1104,7 @@ export function buildProgram() {
       const command = program.commands.find((c) => c.name() === 'checkin');
       const options = command.opts();
       if (options.override && !can(actor.role, PERMISSIONS.HOSTEL_MANAGE)) {
-        throw new AppError('Overriding the fee requirement requires the warden or administrator role.');
+        throw new AppError('Overriding the fee requirement requires the zomwe mukufuna or administrator role.');
       }
       const allocation = stayService.checkIn(command.args[0], actor, {
         allowIneligible: Boolean(options.override),
@@ -1186,7 +1186,7 @@ export function buildProgram() {
     .description('create a user (the first user needs no authentication)')
     .requiredOption('--username <username>')
     .requiredOption('--name <fullName>')
-    .requiredOption('--role <role>', `one of: ${Object.keys(ROLE_NAMES).join(', ')}`)
+    .requiredOption('--role <role>', `one of: ${Object.values(ROLE_NAMES).join(', ')}`)
     .requiredOption('--password <password>')
     .option('-u, --user <username>')
     .option('-p, --password-auth <password>', 'password of the acting administrator')
@@ -1222,7 +1222,7 @@ export function buildProgram() {
     users
       .command('role <username>')
       .description('change a user\'s role')
-      .requiredOption('--role <role>', `one of: ${Object.keys(ROLE_NAMES).join(', ')}`),
+      .requiredOption('--role <role>', `one of: ${Object.values(ROLE_NAMES).join(', ')}`),
   ).action(
     asActor(async (actor) => {
       const command = users.commands.find((c) => c.name() === 'role');

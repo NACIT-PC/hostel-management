@@ -139,9 +139,8 @@ export async function signUp() {
   const username = await text('Username', { field: 'Username', max: 40 });
   const fullName = await text('Full name', { field: 'Full name', max: 120 });
   const role = await select('Role for the new account', [
-    { name: `${roleLabel('admin')} - full access`, value: 'admin' },
     { name: `${roleLabel('warden')} - hostels, allocation and stays`, value: 'warden' },
-    { name: `${roleLabel('clerk')} - front desk`, value: 'clerk' },
+    { name: `${roleLabel('clerk')} - student records, fees and stays`, value: 'clerk' },
   ]);
   const pass = await asPasswordPrompt('Password (min 8 characters)');
   const again = await password('Repeat password');

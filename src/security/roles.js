@@ -1,7 +1,7 @@
 export const ROLE_NAMES = {
   admin: 'Administrator',
-  warden: 'Warden',
-  clerk: 'Clerk / Front desk',
+  warden: 'zomwe mukufuna',
+  clerk: 'front desk',
 };
 
 export const ROLE_PERMISSIONS = {
