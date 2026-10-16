@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { ValidationError } from '../utils/errors.js';
 
-const KEY_LENGTH = 64;
+const KEY_LENGTH = 84;
 const SALT_BYTES = 16;
 const SCHEME = 'scrypt';
 
@@ -25,7 +25,7 @@ export function verifyPassword(plain, stored) {
 }
 
 export function generatePassword(length = 12) {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
   const bytes = crypto.randomBytes(length);
   let out = '';
   for (let i = 0; i < length; i += 1) out += alphabet[bytes[i] % alphabet.length];
