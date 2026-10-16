@@ -139,8 +139,8 @@ export async function chooseAction() {
 }
 
 /**
- * Create an account. The first account is the administrator (no approval); any
- * later account must be approved by an existing administrator.
+ * Create an account. The first account is the administrator; afterwards anyone
+ * can sign up (self-service).
  * @returns {Promise<boolean>} true when an account was created.
  */
 export async function signUp() {
@@ -150,24 +150,8 @@ export async function signUp() {
   }
 
   print(heading('Sign up'));
-  print(color.dim('  New accounts are created by an existing administrator.'));
 
-  const adminUsername = await text('Administrator username', { field: 'Username', max: 40 });
-  const adminPassword = await password('Administrator password');
-
-  let actor = null;
-  try {
-    actor = authService.authenticate(adminUsername, adminPassword);
-  } catch (error) {
-    print(failure(error.message));
-    return false;
-  }
-  if (!actor || !can(actor.role, PERMISSIONS.USER_MANAGE)) {
-    print(failure('Only an administrator can create accounts.'));
-    return false;
-  }
-
-  const username = await text('New username', { field: 'Username', max: 40 });
+  const username = await text('Username', { field: 'Username', max: 40 });
   const fullName = await text('Full name', { field: 'Full name', max: 120 });
   const role = await select('Role for the new account', [
     { name: `${roleLabel('admin')} - full access`, value: 'admin' },
@@ -183,7 +167,9 @@ export async function signUp() {
   }
 
   try {
-    const user = authService.createUser({ username, fullName, password: pass, role }, actor);
+    const user = authService.createUser({ username, fullName, password: pass, role }, null, {
+      selfService: true,
+    });
     print(success(`Account "${user.username}" created. You can now sign in.`));
     await pause();
     return true;

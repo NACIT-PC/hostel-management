@@ -30,8 +30,7 @@ export function printError(error) {
 
 export function banner({ user }) {
   const title = 'Hostel Bed Allocation System';
-  print(color.bold(color.cyan(`\n${'='.repeat(62)}`)));
-  print(color.bold(color.cyan(`  ${title}`)));
+  print(color.bold(color.cyan(`\n  ${title}`)));
   if (user) {
     print(
       color.dim(
@@ -41,7 +40,6 @@ export function banner({ user }) {
       ),
     );
   }
-  print(color.bold(color.cyan(`${'='.repeat(62)}`)));
 }
 
 /* ------------------------------------------------------------------ */

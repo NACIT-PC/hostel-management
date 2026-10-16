@@ -33,10 +33,14 @@ export function countActiveAdmins() {
   );
 }
 
-export function createUser({ username, fullName, password, role }, actor = null) {
-  // The very first user may be created without an actor (bootstrap); after
-  // that only administrators can add accounts.
-  if (countUsers() > 0) assertPermission(actor, PERMISSIONS.USER_MANAGE);
+export function createUser(
+  { username, fullName, password, role },
+  actor = null,
+  { selfService = false } = {},
+) {
+  // The first account bootstraps the system and needs no actor. Later accounts
+  // require an administrator unless self-service sign-up is allowed.
+  if (countUsers() > 0 && !selfService) assertPermission(actor, PERMISSIONS.USER_MANAGE);
 
   const cleanUsername = asCode(username, 'Username', { max: 40 }).toLowerCase();
   const cleanName = asText(fullName, 'Full name', { max: 120 });

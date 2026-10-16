@@ -1,10 +1,4 @@
-/**
- * Interactive prompt helpers built on inquirer.
- *
- * Every helper validates using the same `src/utils/validate.js` rules the
- * services use, so nothing invalid can travel to the database and the error
- * messages the user sees always match the business rules.
- */
+
 import inquirer from 'inquirer';
 import { asAmount, asBoolean, asInteger, asText } from '../utils/validate.js';
 

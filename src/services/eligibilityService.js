@@ -1,12 +1,4 @@
-/**
- * Eligibility assessment.
- *
- * Eligibility = fee deposit satisfied AND gender/year compatible AND a bed
- * exists that satisfies every *required* health/sensitivity condition.
- *
- * `assessStudent()` explains the verdict check-by-check - the CLI prints these
- * details so a clerk always knows exactly why a student was refused.
- */
+
 import { listHostels, listFreeBeds, hostelRuleText, getHostel } from './hostelService.js';
 import { getFeeSummary } from './feeService.js';
 import { resolveStudent, getRequirements } from './studentService.js';
